@@ -1,6 +1,6 @@
 // TODO: select the list element where the suggestions should go, and all three dropdown elements
 //  HINT: look at the HTML
-const suggesionList = document.getElementById("suggestions") as HTMLInputElement;
+const suggestionList = document.getElementById("suggestions") as HTMLInputElement;
 const sun = document.getElementById("sun") as HTMLInputElement;
 const moon = document.getElementById("moon") as HTMLInputElement;
 const rising = document.getElementById("rising") as HTMLInputElement;
@@ -15,12 +15,12 @@ rising.addEventListener("change", postAndUpdate);
 type MatchesRequestData = {[key: string]: string};
 
 // TODO: Define a type for the response data object here.
-type Matches = {matches: string[]};
+type Matches = {"data": string[]};
 
 function postAndUpdate(): void {
   // TODO: empty the suggestionList (you want new suggestions each time someone types something new)
   //  HINT: use .innerHTML
-  suggesionList.innerHTML = "";
+  suggestionList.innerHTML = "";
 
   // TODO: add a type annotation to make this of type MatchesRequestData
   const postParameters : MatchesRequestData = {
@@ -39,19 +39,17 @@ function postAndUpdate(): void {
   // TODO: Call and fill in the updateSuggestions method in one of the .then statements in the Promise
   //  Parse the JSON in the response object
   //  HINT: remember to get the specific field in the JSON you want to use
-  fetch('https://localhost:4567/results', {
-    // Request method
-    method: 'post',
-    // Data in JSON format to send in the request
-    body: JSON.stringify(postParameters),
-    // HTTP headers to tell the receiving server what format the data is in
+  fetch('http://localhost:4567/results', {
+    method: 'POST',
+    body: JSON.stringify(postParameters), // new URLSearchParams(postParameters)
     headers: {
-      // 'Content-Type': 'application/json',
-      "Access-Control-Allow-Origin": "*"
-    },
+      'Access-Control-Allow-Origin': '*'
+    }
   })
-      .then((response) => response.json())
-      .then((data: Matches) => updateSuggestions(data.matches));
+      .then((response: Response) => response.json())
+      .then((jsonResponse: Matches) => {
+          updateSuggestions(jsonResponse.data)
+      })
 }
 
 function updateSuggestions(matches: string[]): void {
@@ -60,8 +58,9 @@ function updateSuggestions(matches: string[]): void {
   //  NOTE: you should use <li> (list item) tags to wrap each element. When you do so,
   //  make sure to add the attribute 'tabindex="0"' (for example: <li tabindex="0">{your element}</li>).
   //  This makes each element selectable via screen reader.
-  for (var i = 0; i < matches.length; i++) {
-    suggesionList.innerHTML += "<li tabindex=\"${i}\">${matches[i}</li>";
+  for (let i = 0; i < matches.length; i++) {
+    var str = "<li tabindex=\"${i}\">" + matches[i] + "</li>";
+    suggestionList.innerHTML += str;
   }
 }
 

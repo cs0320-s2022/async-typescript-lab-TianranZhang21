@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 // TODO: select the list element where the suggestions should go, and all three dropdown elements
 //  HINT: look at the HTML
-const suggesionList = document.getElementById("suggestions");
+const suggestionList = document.getElementById("suggestions");
 const sun = document.getElementById("sun");
 const moon = document.getElementById("moon");
 const rising = document.getElementById("rising");
@@ -22,7 +22,7 @@ rising.addEventListener("change", postAndUpdate);
 function postAndUpdate() {
     // TODO: empty the suggestionList (you want new suggestions each time someone types something new)
     //  HINT: use .innerHTML
-    suggesionList.innerHTML = "";
+    suggestionList.innerHTML = "";
     // TODO: add a type annotation to make this of type MatchesRequestData
     const postParameters = {
         // TODO: get the text inside the input box
@@ -37,19 +37,17 @@ function postAndUpdate() {
     // TODO: Call and fill in the updateSuggestions method in one of the .then statements in the Promise
     //  Parse the JSON in the response object
     //  HINT: remember to get the specific field in the JSON you want to use
-    fetch('https://localhost:4567/results', {
-        // Request method
-        method: 'post',
-        // Data in JSON format to send in the request
+    fetch('http://localhost:4567/results', {
+        method: 'POST',
         body: JSON.stringify(postParameters),
-        // HTTP headers to tell the receiving server what format the data is in
         headers: {
-            // 'Content-Type': 'application/json',
-            "Access-Control-Allow-Origin": "*"
-        },
+            'Access-Control-Allow-Origin': '*'
+        }
     })
         .then((response) => response.json())
-        .then((data) => updateSuggestions(data.matches));
+        .then((jsonResponse) => {
+        updateSuggestions(jsonResponse.data);
+    });
 }
 function updateSuggestions(matches) {
     // TODO: for each element in the set of matches, append it to the suggestionList
@@ -57,8 +55,9 @@ function updateSuggestions(matches) {
     //  NOTE: you should use <li> (list item) tags to wrap each element. When you do so,
     //  make sure to add the attribute 'tabindex="0"' (for example: <li tabindex="0">{your element}</li>).
     //  This makes each element selectable via screen reader.
-    for (var i = 0; i < matches.length; i++) {
-        suggesionList.innerHTML += "<li tabindex=\"${i}\">${matches[i}</li>";
+    for (let i = 0; i < matches.length; i++) {
+        var str = "<li tabindex=\"${i}\">" + matches[i] + "</li>";
+        suggestionList.innerHTML += str;
     }
 }
 // TODO: create an event listener to the document (document.addEventListener) that detects "keyup".

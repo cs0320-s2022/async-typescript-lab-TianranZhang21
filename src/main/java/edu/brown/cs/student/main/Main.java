@@ -65,7 +65,6 @@ public final class Main {
     // TODO: create a call to Spark.post to make a POST request to a URL which
     // will handle getting matchmaking results for the input
     // It should only take in the route and a new ResultsHandler
-    Spark.post("/results", new ResultsHandler());
     Spark.options("/*", (request, response) -> {
       String accessControlRequestHeaders = request.headers("Access-Control-Request-Headers");
       if (accessControlRequestHeaders != null) {
@@ -84,6 +83,7 @@ public final class Main {
     // Allows requests from any domain (i.e., any URL). This makes development
     // easier, but it’s not a good idea for deployment.
     Spark.before((request, response) -> response.header("Access-Control-Allow-Origin", "*"));
+    Spark.post("/results", new ResultsHandler());
   }
 
   /**
